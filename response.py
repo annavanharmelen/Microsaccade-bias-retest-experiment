@@ -3,7 +3,7 @@ This file contains the functions necessary for
 creating the interactive response dial at the end of a trial.
 To run the 'microsaccade bias retest' experiment, see main.py.
 
-made by Anna van Harmelen, 2023
+made by Anna van Harmelen, 2026
 """
 
 from psychopy import event
@@ -83,9 +83,6 @@ def get_response(
     target_object,
     target_orientation,
     target_colour,
-    target_colour_id,
-    response_required,
-    trial_condition,
     settings,
     testing,
     eyetracker,
@@ -128,7 +125,8 @@ def get_response(
     if "q" in pressed:
         raise KeyboardInterrupt()
 
-    draw_dial(stimuli, target_colour, settings)
+    draw_fixation_dot(stimuli["fixation_dot"], target_colour)
+    draw_dial(stimuli, "#eaeaea", settings)
 
     if not testing and eyetracker:
         trigger = get_trigger(
@@ -151,7 +149,7 @@ def get_response(
             item.draw()
 
         if not additional_objects:
-            draw_fixation_dot(stimuli["fixation_dot"])
+            draw_fixation_dot(stimuli["fixation_dot"], target_colour)
 
         stimuli["probe_circle"].draw()
         stimuli["top_handle"].draw()

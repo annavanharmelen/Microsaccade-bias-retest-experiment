@@ -3,7 +3,7 @@ This file contains the functions necessary for
 creating the fixation cross and the bar stimuli.
 To run the 'microsaccade bias retest' experiment, see main.py.
 
-made by Anna van Harmelen, 2023
+made by Anna van Harmelen, 2026
 """
 
 from psychopy import visual
@@ -113,13 +113,13 @@ def draw_circle(item, pos=(0, 0), colour="#d4d4d4"):
 
 
 def create_stimuli_frame(
-    stimuli, left_orientation, right_orientation, colours, block_type, settings
+    stimuli, orientations, colours, settings
 ):
-    draw_fixation_dot(stimuli["fixation_dot"], stimuli["block_info_signal"], block_type)
-    draw_one_bar(stimuli["bar"], left_orientation, colours[0], "left", settings)
-    draw_one_bar(stimuli["bar"], right_orientation, colours[1], "right", settings)
+    draw_fixation_dot(stimuli["fixation_dot"])
+    draw_one_bar(stimuli["bar"], orientations[0], colours[0], "left", settings)
+    draw_one_bar(stimuli["bar"], orientations[1], colours[1], "right", settings)
 
 
-def create_probe_cue_frame(stimuli, colour, block_type):
-    draw_fixation_dot(stimuli["fixation_dot"], stimuli["block_info_signal"], block_type)
-    draw_circle(stimuli["probe_circle"], colour=colour)
+def create_probe_cue_frame(stimuli, colour):
+    draw_fixation_dot(stimuli["fixation_dot"], colour)
+    draw_circle(stimuli["probe_circle"], colour="#eaeaea")

@@ -3,13 +3,13 @@ This file contains the functions necessary for
 creating and running a full block of trials start-to-finish.
 To run the 'microsaccade bias retest' experiment, see main.py.
 
-made by Anna van Harmelen, 2023
+made by Anna van Harmelen, 2026
 """
 
 import random
-from stimuli import show_text
+from stimuli import show_text, draw_fixation_dot
 from response import wait_for_key
-
+from psychopy import core
 
 def create_trial_list(n_trials):
     if n_trials % 16 != 0:
@@ -17,14 +17,14 @@ def create_trial_list(n_trials):
             "Expected n_trials to be divisible by 16, otherwise perfect counterbalancing is not possible."
         )
 
-    # Generate equal distribution of target locations
-    locations = n_trials // 2 * ["left"] + n_trials // 2 * ["right"]
-
     # Generate equal distribution target objects
-    objects = n_trials // 8 * list(range(1, 9, 1))
+    target_object = n_trials // 8 * list(range(1, 9, 1))
+
+    # Generate equal distribution of target locations
+    target_position = n_trials // 2 * ["left"] + n_trials // 2 * ["right"]
 
     # Create trial parameters for all trials
-    trials = list(zip(locations, objects))
+    trials = list(zip(target_object, target_position))
     random.shuffle(trials)
 
     return trials
@@ -81,6 +81,52 @@ def long_break(n_blocks, avg_score, settings, eyetracker):
 
     return False
 
+def fixational_period(duration, dot_item, settings, eyetracker):
+    # Start
+    show_text(
+        f"Please fixate on the following dot for {duration} minutes."
+        "\n\nPress SPACE to start",
+        settings["window"],
+    )
+    settings["window"].flip()
+
+    # Wait for key press
+    if eyetracker:
+        keys = wait_for_key(["space", "c"], settings["keyboard"])
+        if "c" in keys:
+            eyetracker.calibrate()
+            return True
+    else:
+        wait_for_key(["space"], settings["keyboard"])
+
+    # Fixate
+    draw_fixation_dot(dot_item)
+    settings["window"].flip()
+    
+    if eyetracker:
+        eyetracker.tracker.send_message(f"trig{1000}")
+
+    core.wait(duration * 60)
+
+    if eyetracker:
+        eyetracker.tracker.send_message(f"trig{2000}")
+
+    # End
+    show_text(
+        "That was it! Thanks for fixating."
+        "\n\nPress SPACE to start the second half of the experiment",
+        settings["window"],
+    )
+    settings["window"].flip()
+
+    # Wait for key press
+    if eyetracker:
+        keys = wait_for_key(["space", "c"], settings["keyboard"])
+        if "c" in keys:
+            eyetracker.calibrate()
+            return True
+    else:
+        wait_for_key(["space"], settings["keyboard"])
 
 def finish(n_blocks, settings):
     show_text(

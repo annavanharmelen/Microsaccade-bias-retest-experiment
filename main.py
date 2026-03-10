@@ -1,12 +1,12 @@
 """
 Main script for running the 'microsaccade bias retest' experiment
-made by Anna van Harmelen, 2023
+made by Anna van Harmelen, 2026
 
 see README.md for instructions if needed
 """
 
 # Import necessary stuff
-from psychopy import core
+from psychopy import logging, core
 import pandas as pd
 from participantinfo import get_participant_details
 from set_up import get_monitor_and_dir, get_settings
@@ -19,9 +19,9 @@ from practice import practice
 import datetime as dt
 from block import (
     create_trial_list,
-    create_blocks,
     block_break,
     long_break,
+    fixational_period,
     finish,
     quick_finish,
 )
@@ -39,7 +39,10 @@ def main():
     """
 
     # Set whether this is a test run or not
-    testing = False
+    testing = True
+
+    # first things first: ignore warnings
+    logging.console.setLevel(logging.ERROR)
 
     # Get monitor and directory information
     monitor, directory = get_monitor_and_dir(testing)
@@ -78,7 +81,7 @@ def main():
     stimuli = initialise_all_stimuli(settings)
 
     # Practice until participant wants to stop
-    practice(testing, settings)
+    # practice(testing, settings)
 
     # Initialise some stuff
     start_of_experiment = time()
@@ -100,11 +103,12 @@ def main():
                 current_trial += 1
                 start_time = time()
 
-                trial_characteristics: dict = generate_trial_characteristics(...)
+                trial_characteristics: dict = generate_trial_characteristics(trial[0], trial[1])
 
                 # Generate trial
                 report: dict = single_trial(
                     **trial_characteristics,
+                    stimuli=stimuli,
                     settings=settings,
                     testing=testing,
                     eyetracker=None if testing else eyelinker,
@@ -127,10 +131,10 @@ def main():
                     }
                 )
 
-                block_performance.append(report["correct_key"])
+                block_performance.append(report["performance"])
 
             # Calculate average performance score for most recent block
-            avg_score = round(mean(block_performance) * 100)
+            avg_score = round(mean(block_performance))
 
             # Break after end of block, unless it's the last block.
             # Experimenter can re-calibrate the eyetracker by pressing 'c' here.
@@ -145,7 +149,9 @@ def main():
                     )
                 if not testing:
                     eyelinker.start()
-            elif block_nr + 1< N_BLOCKS:
+
+                fixational_period(5, stimuli["fixation_dot"], settings, None if testing else eyelinker)
+            elif block_nr + 1 < N_BLOCKS:
                 while calibrated:
                     calibrated = block_break(
                         block_nr + 1,
