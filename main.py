@@ -53,6 +53,7 @@ def main():
         dtype={
             "participant_number": int,
             "session_number": int,
+            "session_within_pp": int,
             "age": int,
             "trials_completed": str,
         },
