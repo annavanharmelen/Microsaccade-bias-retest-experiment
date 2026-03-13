@@ -23,14 +23,14 @@ class Eyelinker:
        eyelinker.calibrate()
     """
 
-    def __init__(self, participant, session, window, directory) -> None:
+    def __init__(self, participant, session_overall, session_within_pp, window, directory) -> None:
         """
         This also connects to the tracker
         """
         self.directory = directory
         self.window = window
         self.tracker = eyelinker.EyeLinker(
-            window=window, eye="RIGHT", filename=f"{session}_{participant}.edf"
+            window=window, eye="RIGHT", filename=f"{session_overall}_{participant}_{session_within_pp}.edf"
         )
         self.tracker.init_tracker()
 

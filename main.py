@@ -58,7 +58,9 @@ def main():
             "trials_completed": str,
         },
     )
-    new_participants = get_participant_details(old_participants, testing)
+    new_participants, test_or_retest = get_participant_details(
+        old_participants, testing
+    )
 
     # Initialise set-up
     settings = get_settings(monitor, directory)
@@ -69,6 +71,7 @@ def main():
         eyelinker = Eyelinker(
             new_participants.participant_number.iloc[-1],
             new_participants.session_number.iloc[-1],
+            test_or_retest,
             settings["window"],
             settings["directory"],
         )
@@ -104,7 +107,9 @@ def main():
                 current_trial += 1
                 start_time = time()
 
-                trial_characteristics: dict = generate_trial_characteristics(trial[0], trial[1])
+                trial_characteristics: dict = generate_trial_characteristics(
+                    trial[0], trial[1]
+                )
 
                 # Generate trial
                 report: dict = single_trial(
@@ -151,7 +156,9 @@ def main():
                 if not testing:
                     eyelinker.start()
 
-                fixational_period(5, stimuli["fixation_dot"], settings, None if testing else eyelinker)
+                fixational_period(
+                    5, stimuli["fixation_dot"], settings, None if testing else eyelinker
+                )
             elif block_nr + 1 < N_BLOCKS:
                 while calibrated:
                     calibrated = block_break(
@@ -175,7 +182,7 @@ def main():
 
         # Save all collected trial data to a new .csv
         pd.DataFrame(data).to_csv(
-            rf"{settings['directory']}\data_session_{new_participants.session_number.iloc[-1]}{'_test' if testing else ''}.csv",
+            rf"{settings['directory']}\data_session_{new_participants.session_number.iloc[-1]}_{new_participants.participant_number.iloc[-1]}_{test_or_retest}{'_test' if testing else ''}.csv",
             index=False,
         )
 

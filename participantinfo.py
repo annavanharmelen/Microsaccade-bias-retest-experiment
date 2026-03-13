@@ -48,4 +48,4 @@ def get_participant_details(existing_participants: pd.DataFrame, testing):
         [existing_participants, new_participant], ignore_index=True
     )
 
-    return all_participants
+    return all_participants, current_session
