@@ -10,11 +10,11 @@ from trial import (
     single_trial,
     generate_trial_characteristics,
 )
-from stimuli import show_text, draw_fixation_dot
+from stimuli import show_text, draw_fixation_dot, draw_one_object, create_probe_cue_frame
 from response import get_response, wait_for_key, check_quit
-from psychopy import event, core
+from psychopy import core
 from psychopy.hardware.keyboard import Keyboard
-from trial import COLOURS
+from trial import generate_trial_characteristics
 from time import sleep
 import random
 from numpy import mean
@@ -35,7 +35,8 @@ def practice_response(stimuli, eyetracker, settings):
 
         # Show first screen
         show_text(
-            "Welcome!" "\nPress SPACE to start practicing how to reproduce tones.",
+            "Welcome!"
+            "\nPress SPACE to start practicing how to respond.",
             settings["window"],
         )
         settings["window"].flip()
@@ -57,18 +58,38 @@ def practice_response(stimuli, eyetracker, settings):
             settings["window"].flip()
             sleep(0.5)
 
-            # Play tone with certain frequency
-            freq = random.choice(
-                settings["frequencies"][0:5] + settings["frequencies"][6::]
+            # Generate random characteristics
+            target_position = random.choice(["left", "right"])
+            target_object = random.randint(1, 8)
+            target = generate_trial_characteristics(target_object, target_position)
+            target_orientation = target["target_orientation"]
+
+            # Display object with a random orientation + probe wheel around it
+            object = draw_one_object(
+                stimuli["objects"][target_object],
+                target_orientation,
+                "#eaeaea",
+                "middle",
+                settings,
             )
-            stimuli["sounds"][(freq, "both")].play()
-            core.wait(0.75)  # wait tone duration + 250 ms
+            create_probe_cue_frame(stimuli, "#eaeaea")
+            settings["window"].flip()
 
             # Allow response
-            report = get_response(freq, None, None, None, stimuli, settings, True, None)
+            report = get_response(
+                stimuli,
+                target_position,
+                target_object,
+                target_orientation,
+                None,
+                settings,
+                True,
+                None,
+                [object],
+            )
 
             # Save for post-hoc feedback
-            performance.append(int(report["performance_abs"]))
+            performance.append(int(report["performance"]))
 
             # Show feedback
             draw_fixation_dot(stimuli["fixation_dot"])
@@ -87,7 +108,7 @@ def practice_response(stimuli, eyetracker, settings):
             # Pause before next one
             draw_fixation_dot(stimuli["fixation_dot"])
             settings["window"].flip()
-            sleep(random.randint(1500, 2000) / 1000)
+            sleep(random.randint(500, 800) / 1000)
 
             # Check for pressed 'q'
             check_quit(settings["keyboard"])
@@ -96,13 +117,13 @@ def practice_response(stimuli, eyetracker, settings):
         if len(performance) > 0:
             avg_score = round(mean(performance), 1)
             show_text(
-                f"During this practice, your reports were on average off by {avg_score}. "
-                "\nPress SPACE to start practicing full trials.",
+                f"During this practice, your average score was: {avg_score}"
+                "\n\nPress SPACE to start practicing the task.",
                 settings["window"],
             )
         else:
             show_text(
-                "You skipped practice 1.\n\nPress SPACE to start practicing full trials.",
+                "You skipped practice 1.\n\nPress SPACE to start practicing the task.",
                 settings["window"],
             )
 
@@ -126,13 +147,9 @@ def practice_trials(stimuli, eyetracker, settings):
         performance = []
 
         while True:
-            target_pitch = random.choice(["low", "high"])
             target_position = random.choice(["left", "right"])
-            target_item = random.choice([1, 2])
-
-            trial_characteristics = generate_trial_characteristics(
-                (target_pitch, target_position, target_item), settings
-            )
+            target_object = random.randint(1, 8)
+            trial_characteristics = generate_trial_characteristics(target_object, target_position)
 
             # Generate trial
             report = single_trial(
@@ -144,14 +161,14 @@ def practice_trials(stimuli, eyetracker, settings):
             )
 
             # Save for feedback
-            performance.append(int(report["performance_abs"]))
+            performance.append(int(report["performance"]))
 
     except KeyboardInterrupt:
         settings["window"].flip()
         if len(performance) > 0:
             avg_score = round(mean(performance), 1)
             show_text(
-                f"During this practice, your reports were on average off by {avg_score}. "
+                f"During this practice, your average score was: {avg_score}"
                 "\n\nPress SPACE to start the experiment.",
                 settings["window"],
             )

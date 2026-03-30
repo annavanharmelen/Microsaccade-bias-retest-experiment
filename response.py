@@ -13,8 +13,6 @@ from stimuli import draw_fixation_dot, draw_circle, RESPONSE_DIAL_SIZE
 from time import time
 from eyetracker import get_trigger
 
-RESPONSE_DIAL_SIZE = 2
-
 
 def turn_handle(pos, dial_step_size):
     x, y = pos
@@ -108,6 +106,7 @@ def get_response(
 
     for item in additional_objects:
         item.draw()
+        draw_circle(stimuli["probe_circle"], colour="#eaeaea")
         window.flip()
 
     # Wait indefinitely until the participant starts giving an answer
