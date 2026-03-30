@@ -45,7 +45,7 @@ def main():
     logging.console.setLevel(logging.ERROR)
 
     # Get monitor and directory information
-    monitor, directory = get_monitor_and_dir(testing)
+    monitor, directory, object_directory = get_monitor_and_dir(testing)
 
     # Get participant details and save in same file as before
     old_participants = pd.read_csv(
@@ -82,10 +82,10 @@ def main():
         eyelinker.start()
 
     # Initialise stimuli
-    stimuli = initialise_all_stimuli(settings)
+    stimuli = initialise_all_stimuli(object_directory, settings)
 
     # Practice until participant wants to stop
-    # practice(testing, settings)
+    practice(stimuli, None if testing else eyelinker, settings)
 
     # Initialise some stuff
     start_of_experiment = time()
@@ -140,7 +140,7 @@ def main():
                 block_performance.append(report["performance"])
 
             # Calculate average performance score for most recent block
-            avg_score = round(mean(block_performance))
+            avg_score = round(mean(block_performance), 1)
 
             # Break after end of block, unless it's the last block.
             # Experimenter can re-calibrate the eyetracker by pressing 'c' here.

@@ -56,7 +56,7 @@ def generate_trial_characteristics(target_object, target_position):
 
     return {
         "ITI": random.randint(500, 800),
-        "objects": object_positions,
+        "object_ids": object_positions,
         "orientations": orientation_positions,
         "colours": colour_positions,
         "target_object": target_object,
@@ -83,7 +83,7 @@ def do_while_showing(waiting_time, something_to_do, window):
 
 def single_trial(
     ITI,
-    objects,
+    object_ids,
     orientations,
     colours,
     target_object,
@@ -107,7 +107,7 @@ def single_trial(
         (ITI / 1000, lambda: draw_fixation_dot(stimuli["fixation_dot"]), None),
         (
             0.25,
-            lambda: create_stimuli_frame(stimuli, orientations, colours, settings),
+            lambda: create_stimuli_frame(stimuli, object_ids, orientations, colours, settings),
             "stimuli_onset",
         ),
         (1.0, lambda: draw_fixation_dot(stimuli["fixation_dot"]), None),

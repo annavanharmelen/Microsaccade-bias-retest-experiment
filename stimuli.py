@@ -9,14 +9,15 @@ made by Anna van Harmelen, 2026
 from psychopy import visual
 from numpy import zeros
 from math import sqrt
+from os import listdir, path
 
 ECCENTRICITY = 6
 DOT_SIZE = 0.1  # diameter of circle
-BAR_SIZE = [0.6, 4]  # width, height
-RESPONSE_DIAL_SIZE = 2  # radius of circle
+OBJECT_SIZE = [3, 3]  # width, height
+RESPONSE_DIAL_SIZE = 1.5  # radius of circle
 
 
-def initialise_all_stimuli(settings):
+def initialise_all_stimuli(stimuli_directory, settings):
     # Create fixation dot
     fixation_dot = visual.Circle(
         win=settings["window"],
@@ -24,15 +25,6 @@ def initialise_all_stimuli(settings):
         radius=settings["deg2pix"](DOT_SIZE),
         pos=(0, 0),
         fillColor="#eaeaea",
-    )
-
-    # Create main stimulus
-    bar_stimulus = visual.Rect(
-        win=settings["window"],
-        units="pix",
-        width=settings["deg2pix"](BAR_SIZE[0]),
-        height=settings["deg2pix"](BAR_SIZE[1]),
-        pos=(0, 0),
     )
 
     # Create main probe
@@ -62,12 +54,26 @@ def initialise_all_stimuli(settings):
         fillColor=settings["window"].color,
     )
 
+    # Create dictionary of objects
+    objects = {}
+    for idx, file in enumerate(listdir(stimuli_directory)):
+        image = visual.ImageStim(
+            win=settings["window"],
+            image=path.join(stimuli_directory, file),
+            size=(
+                settings["deg2pix"](OBJECT_SIZE[0]),
+                settings["deg2pix"](OBJECT_SIZE[1]),
+            ),
+            units="pix",
+        )
+        objects.update({idx + 1: image})
+
     return {
         "fixation_dot": fixation_dot,
-        "bar": bar_stimulus,
         "probe_circle": probe,
         "top_handle": top_handle,
         "bottom_handle": bottom_handle,
+        "objects": objects,
     }
 
 
@@ -87,7 +93,7 @@ def draw_fixation_dot(dot_item, colour="#eaeaea"):
     dot_item.draw()
 
 
-def draw_one_bar(item, orientation, colour, position, settings):
+def draw_one_object(item, orientation, colour, position, settings):
     # Check input
     if position == "left":
         pos = (-settings["deg2pix"](ECCENTRICITY), 0)
@@ -104,6 +110,8 @@ def draw_one_bar(item, orientation, colour, position, settings):
     item.setColor(colour)
     item.draw()
 
+    return item
+
 
 def draw_circle(item, pos=(0, 0), colour="#d4d4d4"):
     item.lineColor = colour
@@ -112,12 +120,22 @@ def draw_circle(item, pos=(0, 0), colour="#d4d4d4"):
     item.draw()
 
 
-def create_stimuli_frame(
-    stimuli, orientations, colours, settings
-):
-    draw_fixation_dot(stimuli["fixation_dot"])
-    draw_one_bar(stimuli["bar"], orientations[0], colours[0], "left", settings)
-    draw_one_bar(stimuli["bar"], orientations[1], colours[1], "right", settings)
+def create_stimuli_frame(stimuli_dict, object_ids, orientations, colours, settings):
+    draw_fixation_dot(stimuli_dict["fixation_dot"])
+    draw_one_object(
+        stimuli_dict["objects"][object_ids[0]],
+        orientations[0],
+        colours[0],
+        "left",
+        settings,
+    )
+    draw_one_object(
+        stimuli_dict["objects"][object_ids[1]],
+        orientations[1],
+        colours[1],
+        "right",
+        settings,
+    )
 
 
 def create_probe_cue_frame(stimuli, colour):

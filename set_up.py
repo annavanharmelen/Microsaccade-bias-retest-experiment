@@ -24,6 +24,9 @@ def get_monitor_and_dir(testing: bool):
         }
 
         directory = r"..\..\Data\test2"
+        stimuli_directory = (
+            r"..\..\Forms, explanation, documentation\m7 - test-retest\stimulus set"
+        )
 
     else:
         # lab
@@ -36,7 +39,7 @@ def get_monitor_and_dir(testing: bool):
 
         directory = r"C:\Users\Anna_vidi\Desktop\microsaccade_data"
 
-    return monitor, directory
+    return monitor, directory, stimuli_directory
 
 
 def get_settings(monitor: dict, directory):
