@@ -38,9 +38,9 @@ def generate_trial_characteristics(target_object, target_position):
     ]
 
     # Decide on distractor object
-    distractor_object = random.randint(1, 8)
-    while distractor_object == target_object:
-        distractor_object = random.randint(1, 8)
+    distractor_object = random.randint(1, 7)
+    if distractor_object >= target_object:
+        distractor_object += 1
 
     # Decide on distractor position
     if target_position == "left":
