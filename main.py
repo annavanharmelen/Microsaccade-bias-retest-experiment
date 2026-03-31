@@ -27,7 +27,7 @@ from block import (
 )
 
 N_BLOCKS = 20
-TRIALS_PER_BLOCK = 48
+TRIALS_PER_BLOCK = 32
 
 
 def main():
