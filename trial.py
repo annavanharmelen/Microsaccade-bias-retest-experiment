@@ -110,7 +110,7 @@ def single_trial(
             lambda: create_stimuli_frame(stimuli, object_ids, orientations, colours, settings),
             "stimuli_onset",
         ),
-        (1.0, lambda: draw_fixation_dot(stimuli["fixation_dot"]), None),
+        (0.75, lambda: draw_fixation_dot(stimuli["fixation_dot"]), None),
         (1.5, lambda: draw_fixation_dot(stimuli["fixation_dot"], target_colour), "cue_onset"),
         (0.0, lambda: create_probe_cue_frame(stimuli, target_colour), None),
     ]
