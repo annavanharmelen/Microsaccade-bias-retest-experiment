@@ -160,7 +160,7 @@ def get_response(
     idle_reaction_time = response_started - idle_reaction_time_start
 
     if not testing and eyetracker:
-        trigger = get_trigger("response_offset", ...)
+        trigger = get_trigger("response_offset", target_position, target_object)
         eyetracker.tracker.send_message(f"trig{trigger}")
 
     # Make sure keystrokes made during this trial don't influence the next
