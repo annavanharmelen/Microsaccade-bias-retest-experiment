@@ -115,6 +115,14 @@ def get_response(
 
     response_started = time()
 
+    if not testing and eyetracker:
+        trigger = get_trigger(
+            "response_onset",
+            target_position,
+            target_object,
+        )
+        eyetracker.tracker.send_message(f"trig{trigger}")
+
     if "m" in pressed:
         key = "m"
         rad = settings["dial_step_size"]
@@ -126,14 +134,6 @@ def get_response(
 
     draw_fixation_dot(stimuli["fixation_dot"], target_colour)
     draw_dial(stimuli, "#eaeaea", settings)
-
-    if not testing and eyetracker:
-        trigger = get_trigger(
-            "response_onset",
-            target_position,
-            target_object,
-        )
-        eyetracker.tracker.send_message(f"trig{trigger}")
 
     # Stop rotating the moment either of the following happens:
     # - the participant released the rotation key
