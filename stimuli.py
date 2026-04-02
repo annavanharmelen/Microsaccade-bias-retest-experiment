@@ -13,8 +13,8 @@ from os import listdir, path
 
 ECCENTRICITY = 6
 DOT_SIZE = 0.1  # diameter of circle
-OBJECT_SIZE = [3, 3]  # width, height
-RESPONSE_DIAL_SIZE = 1.5  # radius of circle
+OBJECT_SIZE = [4, 4]  # width, height
+RESPONSE_DIAL_SIZE = 2  # radius of circle
 
 
 def initialise_all_stimuli(stimuli_directory, settings):
