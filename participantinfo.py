@@ -16,16 +16,11 @@ def get_participant_details(existing_participants: pd.DataFrame, testing):
 
     if first_session.lower() == "y":
         current_session = 1
-        # Generate random & unique participant number
-        participant = random.randint(10, 99)
-        while participant in existing_participants.participant_number.tolist():
-            participant = random.randint(10, 99)
-
-        print(f"Participant number: {participant}")
     else:
         current_session = 2
-        # Ask for participant number from last time
-        participant = int(input("Participant number: "))
+    
+    # Ask for participant number (based on randomly generated list)
+    participant = int(input("Participant number: "))
 
     if not testing:
         # Get participant age
