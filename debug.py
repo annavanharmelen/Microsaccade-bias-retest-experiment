@@ -8,10 +8,11 @@ made by Anna van Harmelen, 2026
 from block import fixational_period
 from set_up import get_monitor_and_dir, get_settings
 from stimuli import initialise_all_stimuli
+from psychopy import core, visual
+from trial import generate_trial_characteristics
 
-monitor, dir = get_monitor_and_dir(True)
-settings = get_settings(monitor, dir)
+monitor, directory, stimuli_directory = get_monitor_and_dir(True)
+settings = get_settings(monitor, directory)
+stimuli = initialise_all_stimuli(stimuli_directory, settings)
 
-stimuli = initialise_all_stimuli(settings)
-
-fixational_period(5, stimuli["fixation_dot"], settings, None)
+fixational_period(0.05, stimuli["fixation_dot"], settings, None)
