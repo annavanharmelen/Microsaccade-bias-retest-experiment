@@ -82,60 +82,70 @@ def long_break(n_blocks, avg_score, settings, eyetracker):
     return False
 
 def fixational_period(duration, dot_item, settings, eyetracker):
-    # Start
-    show_text(
-        f"Please fixate on the following dot for {duration} minutes."
-        f"\nYou will start with {duration / 2} minutes, and then get a break before continuing."
-        "\n\nPress SPACE to start",
-        settings["window"],
-    )
-    settings["window"].flip()
+    while True:
+        # Start
+        show_text(
+            f"Please fixate on the following dot for {duration} minutes."
+            f"\nYou will start with {duration / 2} minutes, and then get a break before continuing."
+            "\n\nPress SPACE to start",
+            settings["window"],
+        )
+        settings["window"].flip()
 
-    # Wait for key press
-    if eyetracker:
-        keys = wait_for_key(["space", "c"], settings["keyboard"])
-        if "c" in keys:
-            eyetracker.calibrate()
-            return True
-    else:
-        wait_for_key(["space"], settings["keyboard"])
+        # Wait for key press
+        if eyetracker:
+            keys = wait_for_key(["space", "c"], settings["keyboard"])
+            if "c" in keys:
+                eyetracker.calibrate()
+            elif "space" in keys:
+                break
+        else:
+            wait_for_key(["space"], settings["keyboard"])
+            break
 
     # Fixate in 2 parts, with a small break in between
     fixate(duration / 2, dot_item, settings, eyetracker)
-    show_text(
-        "That was the first half! Give your eyes a rest for as long as you want."
-        f"\n\nPress SPACE to fixate for the final {duration / 2} minutes.",
-        settings["window"],
-    )
-    settings["window"].flip()
 
-    # Wait for key press
-    if eyetracker:
-        keys = wait_for_key(["space", "c"], settings["keyboard"])
-        if "c" in keys:
-            eyetracker.calibrate()
-            return True
-    else:
-        wait_for_key(["space"], settings["keyboard"])
+    while True:
+        show_text(
+            "That was the first half! Give your eyes a rest for as long as you want."
+            f"\n\nPress SPACE to fixate for the final {duration / 2} minutes.",
+            settings["window"],
+        )
+        settings["window"].flip()
+
+        # Wait for key press
+        if eyetracker:
+            keys = wait_for_key(["space", "c"], settings["keyboard"])
+            if "c" in keys:
+                eyetracker.calibrate()
+            elif "space" in keys:
+                break
+        else:
+            wait_for_key(["space"], settings["keyboard"])
+            break
 
     fixate(duration / 2, dot_item, settings, eyetracker)
         
     # End
-    show_text(
-        "That was it! Thanks for fixating!"
-        "\n\nPress SPACE to start the second half of the experiment",
-        settings["window"],
-    )
-    settings["window"].flip()
+    while True:
+        show_text(
+            "That was it! Thanks for fixating!"
+            "\n\nPress SPACE to start the second half of the experiment",
+            settings["window"],
+        )
+        settings["window"].flip()
 
-    # Wait for key press
-    if eyetracker:
-        keys = wait_for_key(["space", "c"], settings["keyboard"])
-        if "c" in keys:
-            eyetracker.calibrate()
-            return True
-    else:
-        wait_for_key(["space"], settings["keyboard"])
+        # Wait for key press
+        if eyetracker:
+            keys = wait_for_key(["space", "c"], settings["keyboard"])
+            if "c" in keys:
+                eyetracker.calibrate()
+            elif "space" in keys:
+                break
+        else:
+            wait_for_key(["space"], settings["keyboard"])
+            break
 
 def fixate(duration, dot_item, settings, eyetracker):
     draw_fixation_dot(dot_item)
